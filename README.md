@@ -1,10 +1,14 @@
 # OptiTest AI: An AI-Assisted Optical Link Simulation, Fault-Injection, and Software Validation Framework
 
+[![GitHub Repo](https://img.shields.io/badge/GitHub-sheena005%2Foptitest--ai-181717.svg?logo=github)](https://github.com/sheena005/optitest-ai)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![Pytest](https://img.shields.io/badge/Tests-20%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
 [![ML Accuracy](https://img.shields.io/badge/ML%20Accuracy-99.55%25-success.svg)](https://scikit-learn.org/)
 [![Streamlit](https://img.shields.io/badge/UI-Streamlit-red.svg)](https://streamlit.io/)
+
+> 🌐 **Live Application URL:** [https://drhji-2409-40f4-201b-b2f2-60d3-12a2-68b0-fa42.run.pinggy-free.link](https://drhji-2409-40f4-201b-b2f2-60d3-12a2-68b0-fa42.run.pinggy-free.link)  
+> 📦 **GitHub Repository:** [https://github.com/sheena005/optitest-ai](https://github.com/sheena005/optitest-ai)
 
 OptiTest AI is an engineering framework designed to simulate optical transmission links, inject controlled physical faults, automate software validation against ITU-T/IEEE standards, detect anomalous behavior via machine learning, and produce grounded root cause analysis (RCA) reports with Generative AI.
 
