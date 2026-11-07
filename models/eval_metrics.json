@@ -1,0 +1,26 @@
+{
+  "accuracy": 0.9954861111111111,
+  "macro_f1": 0.9947670926981925,
+  "target_names": [
+    "NORMAL",
+    "FIBER_CUT",
+    "EXCESS_ATTENUATION",
+    "DIRTY_CONNECTOR",
+    "LASER_AGING",
+    "OPTICAL_NOISE"
+  ],
+  "feature_importances": {
+    "osnr_db": 0.1928998412177379,
+    "rx_power_rolling_std": 0.15021510429308907,
+    "osnr_delta": 0.0995870823231178,
+    "q_factor": 0.09255850654323092,
+    "rx_power_dbm": 0.09182473352968157,
+    "laser_bias_current_ma": 0.08501473308557657,
+    "log10_ber": 0.08356781233040517,
+    "bias_current_delta": 0.06709804073717211,
+    "rx_power_delta": 0.06445958938693032,
+    "laser_temperature_c": 0.06406827160385338,
+    "tx_power_dbm": 0.0073158299839709805,
+    "supply_voltage_v": 0.0013904549652343594
+  }
+}

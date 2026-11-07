@@ -1,0 +1,37 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Build artifacts and compiled extensions
+build/
+*.so
+*.o
+*.a
+*.dylib
+*.dll
+optitest_core.cpython*
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp

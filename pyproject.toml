@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "pybind11>=2.11.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "optitest"
+version = "1.0.0"
+description = "AI-Assisted Optical Link Simulation, Fault-Injection, and Software Validation Framework"
+authors = [{ name = "OptiTest AI Team" }]
+requires-python = ">=3.8"
+dependencies = [
+    "pybind11>=2.11.0",
+    "numpy>=1.24.0",
+    "scikit-learn>=1.3.0",
+    "pandas>=2.0.0",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "streamlit>=1.30.0",
+    "plotly>=5.18.0",
+    "joblib>=1.3.0"
+]
