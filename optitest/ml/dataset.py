@@ -144,3 +144,103 @@ def generate_telemetry_dataset(num_runs_per_fault: int = 15, seed: int = 42) -> 
 
     dataset = pd.concat(all_dfs, ignore_index=True)
     return dataset
+
+
+def generate_ood_dataset(num_runs_per_fault: int = 6, seed: int = 777) -> pd.DataFrame:
+    """
+    Generate Out-of-Distribution (OOD) test dataset to evaluate model robustness.
+    Includes:
+    - Ultra-long fiber spans (105-140 km) unseen in standard training (10-80 km)
+    - Extreme optical launch powers (-5.0 dBm starved, +6.0 dBm high-power)
+    - High insertion losses and elevated 3x sensor jitter
+    - Non-standard degradation slopes and high-temperature environments
+    """
+    np.random.seed(seed)
+    all_dfs = []
+
+    # OOD Parameter Regimes
+    ood_lengths = [105.0, 120.0, 135.0]
+    ood_tx_powers = [-5.0, 6.0]
+    run_id = 10000
+    fault_types = list(LABEL_MAP.keys())
+
+    for fault in fault_types:
+        for _ in range(num_runs_per_fault):
+            length = float(np.random.choice(ood_lengths)) + np.random.uniform(-4.0, 4.0)
+            tx_pow = float(np.random.choice(ood_tx_powers)) + np.random.uniform(-0.5, 0.5)
+            other_loss = 4.0 + np.random.uniform(-0.5, 1.0)  # High patch panel insertion loss
+            alpha = 0.22 + np.random.uniform(-0.02, 0.03)
+
+            params = LinkParameters(
+                tx_power_dbm=tx_pow,
+                fiber_length_km=length,
+                attenuation_db_per_km=alpha,
+                other_loss_db=other_loss
+            )
+            link = OpticalLinkWrapper(params)
+            link.reset_noise_generator(seed + run_id)
+
+            history = []
+            num_steps = 60
+            dt = 0.1
+            fault_start = 2.0
+
+            for i in range(num_steps):
+                t = i * dt
+                p_att, p_noise, p_bias, p_temp, force_los = 0.0, 0.0, 0.0, 0.0, False
+                current_label = "NORMAL"
+
+                if t >= fault_start:
+                    if fault == "FIBER_CUT":
+                        force_los = True
+                        p_att = 99.0
+                        current_label = "FIBER_CUT"
+                    elif fault == "EXCESS_ATTENUATION":
+                        # Non-linear cubic ramp
+                        elapsed = t - fault_start
+                        p_att = min(18.0, 0.8 * (elapsed ** 1.8))
+                        current_label = "EXCESS_ATTENUATION"
+                    elif fault == "DIRTY_CONNECTOR":
+                        # Heavy contamination with high scattering
+                        p_att = 14.5 + np.random.uniform(0.0, 3.5)
+                        p_noise = 4.0
+                        current_label = "DIRTY_CONNECTOR"
+                    elif fault == "LASER_AGING":
+                        # Fast thermal runaway
+                        elapsed = t - fault_start
+                        p_bias = min(40.0, elapsed * 7.5)
+                        p_temp = min(22.0, elapsed * 4.0)
+                        p_att = 0.8
+                        current_label = "LASER_AGING"
+                    elif fault == "OPTICAL_NOISE":
+                        # High-power amplified spontaneous emission ripple
+                        p_noise = 14.0 + np.random.uniform(0.0, 5.0)
+                        current_label = "OPTICAL_NOISE"
+
+                sample = link.step(
+                    timestamp_s=t,
+                    injected_attenuation_db=p_att,
+                    injected_noise_db=p_noise,
+                    bias_current_drift_ma=p_bias,
+                    temp_drift_c=p_temp,
+                    force_los=force_los,
+                    fault_name=current_label
+                )
+                # Inject 3x elevated telemetry measurement noise (sensor jitter)
+                sample.rx_power_dbm += float(np.random.normal(0.0, 0.15))
+                sample.laser_bias_current_ma += float(np.random.normal(0.0, 0.30))
+                sample.laser_temperature_c += float(np.random.normal(0.0, 0.25))
+
+                sample.fault_active = current_label
+                history.append(sample)
+
+            run_df = extract_features_from_history(history)
+            run_df["fault_category"] = [s.fault_active for s in history]
+            run_df["label"] = run_df["fault_category"].map(LABEL_MAP)
+            run_df["run_id"] = run_id
+            all_dfs.append(run_df)
+            run_id += 1
+
+    ood_dataset = pd.concat(all_dfs, ignore_index=True)
+    return ood_dataset
+
